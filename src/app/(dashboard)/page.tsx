@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { animationDelayStyle } from "../utils/methods";
+import { animationDelayStyle } from "../../utils/methods";
 
 export type DocumentSection = {
   title: string;

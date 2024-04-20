@@ -1,4 +1,4 @@
-import { animationDelayStyle } from "@/app/utils/methods";
+import { animationDelayStyle } from "@/utils/methods";
 import { ArrowLeft, File, FileText } from "lucide-react";
 import Link from "next/link";
 
