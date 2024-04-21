@@ -12,13 +12,15 @@ export function Questions({
 }) {
   // shuffledQuestions
   const questions = useMemo(() => {
-    return baseQuestions.map((question) => {
-      const options = question.options.sort(() => Math.random() - 0.5);
-      return {
-        ...question,
-        options,
-      };
-    }).sort(() => Math.random() - 0.5);
+    return baseQuestions
+      .map((question) => {
+        const options = question.options.sort(() => Math.random() - 0.5);
+        return {
+          ...question,
+          options,
+        };
+      })
+      .sort(() => Math.random() - 0.5);
   }, [baseQuestions]);
 
   const [viewing, setViewing] = useState(0);
@@ -29,14 +31,32 @@ export function Questions({
 
   const handleNext = useCallback(() => {
     if (selected) {
-      if (question.options.find((option) => option.id === selected)?.correct) {
-        toast.success("Correct Answer");
-      } else {
-        toast.error("Incorrect Answer");
-      }
-
+      fetch(`/api/v1/question/${question.id}/answer`, {
+        method: "POST",
+        body: JSON.stringify({
+          optionId: selected,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.correct) {
+            toast.success("Correct Answer");
+            setSelected(null);
+            setViewing((prev) => prev + 1);
+          } else {
+            toast.error("Incorrect Answer");
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          toast.error("An error occurred");
+        });
+      //   if (question.options.find((option) => option.id === selected)?.correct) {
+      //     toast.success("Correct Answer");
+      //   } else {
+      //     toast.error("Incorrect Answer");
+      //   }
       // setViewing((prev) => prev + 1);
-      setSelected(null);
     } else {
       toast.error("Please select an answer");
     }
