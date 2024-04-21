@@ -1,3 +1,4 @@
+import { UploadCard } from "@/components/UploadCard";
 import { animationDelayStyle } from "@/utils/methods";
 import { ArrowLeft, File, FileText } from "lucide-react";
 import Link from "next/link";
@@ -38,24 +39,20 @@ export default function UploadPage() {
             }}
             className="animate-files-icon-appear right-0 opacity-0 absolute w-36 h-36 translate-x-[300%] -translate-y-[200%] rotate-[45deg]"
           />
-          <div className="h-full w-full bg-white shadow-2xl shadow-accent-secondary/20 py-20 border-2 border-dashed border-black/10 z-10 rounded-3xl">
-            <header>
-              <FileText className="w-24 h-24 stroke-[1px] mx-auto" />
-            </header>
-            <input
-              type="file"
-              hidden
-              accept=".doc,.docx,.pdf"
-              id="fileID"
-              style={{ display: "none" }}
-            />
-            <button className="text-xl mt-6">Choose File</button>
-            <div className="text-sm opacity-80">
-              Upload a PDF with 2 pages or less
-            </div>
-          </div>
+          <UploadCard />
         </div>
       </div>
     </div>
   );
 }
+
+// input[type="file"] {
+//   display: none;
+// }
+
+// .custom-file-upload {
+//   border: 1px solid #ccc;
+//   display: inline-block;
+//   padding: 6px 12px;
+//   cursor: pointer;
+// }
