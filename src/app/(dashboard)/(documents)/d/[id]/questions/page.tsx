@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export type DocumentQuestionsPageProps = {
+type DocumentQuestionsPageProps = {
   params: {
     id: string;
   };

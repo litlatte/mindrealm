@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export type DocumentFlashCardsPageProps = {
+type DocumentFlashCardsPageProps = {
   params: {
     id: string;
   };

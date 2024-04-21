@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GraphVizClient } from "./graphviz";
 
-export type DocumentFlashCardsPageProps = {
+type DocumentFlashCardsPageProps = {
   params: {
     id: string;
   };

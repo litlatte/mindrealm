@@ -14,7 +14,7 @@ import { prisma } from "@/lib/db";
 import { DeleteDocumentButton } from "@/components/deletedocument";
 import { PRETTY_EXPERIENCES } from "@/utils/constants";
 
-export type DocumentPageProps = {
+type DocumentPageProps = {
   params: {
     id: string;
   };

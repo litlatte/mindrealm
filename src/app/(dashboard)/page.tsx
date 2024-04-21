@@ -14,17 +14,17 @@ import { animationDelayStyle } from "../../utils/methods";
 import { Document } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
-export type DocumentSection = {
+type DocumentSection = {
   title: string;
   summary: string;
 };
 
-export type DocumentCardProps = {
+type DocumentCardProps = {
   document: Document;
   index: number;
 };
 
-export function DocumentCard({ document, index }: DocumentCardProps) {
+function DocumentCard({ document, index }: DocumentCardProps) {
   return (
     <div className="relative bg-white p-6 rounded-3xl h-52 w-80 flex flex-col justify-between border border-black/10 overflow-hidden">
       <div className="text-2xl font-semibold">{document.title}</div>
