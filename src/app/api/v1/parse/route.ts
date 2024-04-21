@@ -213,31 +213,31 @@ export async function POST(req: Request) {
     },
   });
 
-  // const promises: Promise<Prisma.BatchPayload>[] = [];
-  // for (const question of questions) {
-  //   promises.push(
-  //     new Promise(async (resolve, reject) => {
-  //       const q = await prisma.question.create({
-  //         data: {
-  //           documentId: document.id,
-  //           title: question.question,
-  //           difficulty: question.difficulty,
-  //         },
-  //       });
-  //       prisma.option
-  //         .createMany({
-  //           data: question.options.map((option, index) => ({
-  //             questionId: q.id,
-  //             text: option.text,
-  //             correct: index == question.right_answer,
-  //           })),
-  //         })
-  //         .then(resolve)
-  //         .catch(reject);
-  //     })
-  //   );
-  // }
-  // await Promise.all(promises);
+  const promises: Promise<Prisma.BatchPayload>[] = [];
+  for (const question of questions) {
+    promises.push(
+      new Promise(async (resolve, reject) => {
+        const q = await prisma.question.create({
+          data: {
+            documentId: document.id,
+            title: question.question,
+            difficulty: question.difficulty,
+          },
+        });
+        prisma.option
+          .createMany({
+            data: question.options.map((option, index) => ({
+              questionId: q.id,
+              text: option.text,
+              correct: index == question.right_answer,
+            })),
+          })
+          .then(resolve)
+          .catch(reject);
+      })
+    );
+  }
+  await Promise.all(promises);
 
   let flashCardsArr = flashCards;
 
