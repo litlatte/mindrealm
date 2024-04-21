@@ -23,8 +23,8 @@ const FLASH_CARD_SYSTEM_PROMPT = (experience: Experience) =>
   "Present only one meticulously crafted correct answer." +
   "Observation:" +
   "The response must be in JSON format of an array of at least 10 elements containing a question an answer and the difficulty of the question where  the difficulty is a number calculated based on how much different information you need to answer the question" +
-  `Difficulty level to respect: ${PRETTY_EXPERIENCES[experience]}`
-  "The TypeScript type to follow is:\n" +
+  `Difficulty level to respect: ${PRETTY_EXPERIENCES[experience]}`;
+"The TypeScript type to follow is:\n" +
   "type FlashCard = {\n" +
   "  question: string;\n" +
   "  answer: string;\n" +
@@ -88,10 +88,15 @@ const QUESTIONS_SYSTEM_PROMPT = (experience: Experience) =>
     }
   ]\n\nThe response must consist of multiple elements fromatted in JSON and must be a valid JSON array only`;
 
+const MindMapPrompt =
+  'Your task is to create mind maps based on scientific literature, focusing on key concepts for clarity. Use Graphviz language to organize concepts and relationships. Follow these steps: 1. Define nodes with square brackets [ ] for each concept (e.g., [Node1], [Node2]). 2. Connect nodes with arrows -> to show relationships (e.g., Node1 -> Node2). 3. Label edges with double quotes after arrows (e.g., Node1 -> Node2 [label="Edge Label"]). 4. Customize nodes or edges with shapes, colors, or styles. Adjust graph style based on reported education level to enhance user experience (e.g., [University Bachelor]). Each argument should have a unique box color. Use distinct colors for each argument. Example dot language: digraph G { graph [fontname = "Handlee"]; node [fontname = "Handlee"]; edge [fontname = "Handlee"]; bgcolor=transparent; subgraph cluster_0 { node [color=red]; color=red; node [color=pink]; a0 -> a1 -> a2 -> a3; label = "process #1"; fontsize = 20; } subgraph cluster_1 { node [color=blue]; b0 -> b1 -> b2 -> b3; label = "process #2"; fontsize = 20; color=blue } start -> a0; start -> b0; a1 -> b3; b2 -> a3; a3 -> a0; a3 -> end; b3 -> end; start [shape=Mdiamond]; end [shape=Msquare]; }' +
+  "Return only the graph. Do not use the node [style=filled].";
+
 export const prompts = {
   flashCards: FLASH_CARD_SYSTEM_PROMPT,
   questions: QUESTIONS_SYSTEM_PROMPT,
   experienceEvaluation: EXPERIENCE_EVAULATION_SYSTEM_PROMPT,
+  mindMap: MindMapPrompt,
 } as const;
 
 export type PromptType = keyof typeof prompts;

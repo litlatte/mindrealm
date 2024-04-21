@@ -189,7 +189,7 @@ export async function POST(req: Request) {
         prompts.questions(experience as Experience),
         pdfText
       )) || undefined;
-    console.log(`Flash Cards: ${oQuestions}`);
+    console.log(`Questions: ${oQuestions}`);
     try {
       questions = JSON.parse(
         oQuestions?.replaceAll("```json", "")?.replaceAll("```", "") || ""
@@ -214,11 +214,29 @@ export async function POST(req: Request) {
     );
   }
 
+  let mindMap: string | undefined = undefined;
+  while (maxErrors > 0 && !questions) {
+    let oMindMap =
+      (await generateOpenAIResponse(openai, prompts.mindMap, pdfText)) ||
+      undefined;
+    console.log(`Mind map: ${mindMap}`);
+    mindMap = oMindMap;
+  }
+  if (!mindMap) {
+    return new Response(
+      JSON.stringify({
+        error: `Could not generate questions`,
+      }),
+      { status: 500 }
+    );
+  }
+
   const document = await prisma.document.create({
     data: {
       title,
       experience,
       fullText: pdfText,
+      mindMap,
     },
   });
 

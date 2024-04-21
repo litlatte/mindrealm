@@ -20,6 +20,7 @@ model Document {
   createdAt  DateTime    @default(now())
   experience String
   fullText   String
+  mindMap    String
   questions  Question[]
   Flashcard  Flashcard[]
   deleted    Boolean     @default(false)
