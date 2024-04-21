@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "dotenv -e .env.local -- npx prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.12.1",
@@ -21,6 +22,7 @@
     "pdfjs-dist": "^4.1.392",
     "react": "^18",
     "react-dom": "^18",
+    "dotenv-cli": "^7.4.1",
     "react-pdftotext": "^1.2.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
@@ -31,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "dotenv-cli": "^7.4.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.2",
     "postcss": "^8",
