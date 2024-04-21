@@ -15,3 +15,12 @@ export const PRETTY_EXPERIENCES = {
 } as const;
 
 export type Experience = (typeof EXPERIENCES)[number];
+
+export type LLMQuestion = {
+  question: string;
+  options: {
+    text: string;
+  }[];
+  right_answer: number;
+  level: Experience;
+};

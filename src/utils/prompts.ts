@@ -42,7 +42,7 @@ const QUESTIONS_SYSTEM_PROMPT = (experience: Experience) =>
   "    text: string;\n" +
   "  }[];\n" +
   "  right_answer: number;\n" +
-  "  level: EducationLevel;\n" +
+  "  difficulty: number; /* number that goes 1 to 10, the difficulty is calculated based on how much different information you need to answer the question */ */\n" +
   "};" +
   "Follwing typescript type generate a JSON looking like this:\n" +
   `{

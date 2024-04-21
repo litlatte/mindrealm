@@ -14,11 +14,12 @@ datasource db {
 }
 
 model Document {
-  id        String     @id @default(cuid())
-  title     String
-  createdAt DateTime   @default(now())
-  fullText  String
-  questions Question[]
+  id         String     @id @default(cuid())
+  title      String
+  createdAt  DateTime   @default(now())
+  experience String
+  fullText   String
+  questions  Question[]
 }
 
 model Question {
@@ -27,13 +28,23 @@ model Question {
   createdAt  DateTime @default(now())
   documentId String
   document   Document @relation(fields: [documentId], references: [id])
-  answers    Answer[]
+  answers    Option[]
+  Answer     Answer[]
 }
 
-model Answer {
+model Option {
   id         String   @id @default(cuid())
   text       String
   question   Question @relation(fields: [questionId], references: [id])
   questionId String
-  right      Boolean
+  correct      Boolean
+  Answer     Answer[]
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  questionId String
+  optionId   String
+  question   Question @relation(fields: [questionId], references: [id])
+  option     Option   @relation(fields: [optionId], references: [id])
 }

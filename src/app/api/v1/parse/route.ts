@@ -2,14 +2,19 @@ import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { NextResponse } from "next/server";
 import { prompts, type PromptType } from "@/utils/prompts";
-import { EXPERIENCES_REGEX, EXPERIENCES, Experience } from "@/utils/constants";
+import {
+  EXPERIENCES_REGEX,
+  EXPERIENCES,
+  Experience,
+  LLMQuestion,
+} from "@/utils/constants";
 import { prisma } from "@/lib/db";
+import { Option, Prisma } from "@prisma/client";
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 
 function generateOpenAIResponse(
   openai: OpenAI,
@@ -49,7 +54,6 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   const pdfText = body.pdfText;
-  
 
   if (typeof pdfText !== "string" || pdfText.length === 0) {
     return new Response(
@@ -61,7 +65,7 @@ export async function POST(req: Request) {
   }
 
   const title = body.title;
-  if(typeof title !== "string" || title.length === 0) {
+  if (typeof title !== "string" || title.length === 0) {
     return new Response(
       JSON.stringify({
         error: "Invalid title",
@@ -132,7 +136,7 @@ export async function POST(req: Request) {
     );
   }
   console.log(`Experience: ${experience}`);
-  let questions: any | undefined = undefined;
+  let questions: LLMQuestion[] | undefined = undefined;
   while (maxErrors > 0 && !questions) {
     let oQuestions =
       (await generateOpenAIResponse(
@@ -143,7 +147,7 @@ export async function POST(req: Request) {
     console.log(`Questions: ${oQuestions}`);
     try {
       questions = JSON.parse(oQuestions || "");
-      questions = questions?.questions || questions;̂
+      questions = ((questions as any)?.questions || questions) as LLMQuestion[];
     } catch (e) {
       console.error(`Invalid JSON response: `, e);
     }
@@ -163,12 +167,42 @@ export async function POST(req: Request) {
     );
   }
 
-//   const document = prisma
+  const document = await prisma.document.create({
+    data: {
+      title,
+      experience,
+      fullText: pdfText,
+    },
+  });
+
+  const promises: Promise<Prisma.BatchPayload>[] = [];
+  for (const question of questions) {
+    promises.push(
+      new Promise(async (resolve, reject) => {
+        const q = await prisma.question.create({
+          data: {
+            documentId: document.id,
+            title: question.question,
+          },
+        });
+        prisma.option
+          .createMany({
+            data: question.options.map((option, index) => ({
+              questionId: q.id,
+              text: option.text,
+              correct: index == question.right_answer,
+            })),
+          })
+          .then(resolve)
+          .catch(reject);
+      })
+    );
+  }
+  await Promise.all(promises);
 
   return new Response(
     JSON.stringify({
-      experience,
-      questions,
+      documentId: document.id,
     }),
     { status: 200 }
   );
