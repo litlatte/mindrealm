@@ -215,14 +215,19 @@ export async function POST(req: Request) {
   }
 
   let mindMap: string | undefined = undefined;
-  while (maxErrors > 0 && !questions) {
+  while (maxErrors > 0 && !mindMap) {
     let oMindMap =
       (await generateOpenAIResponse(openai, prompts.mindMap, pdfText)) ||
       undefined;
-    console.log(`Mind map: ${mindMap}`);
+    console.log(`Mind map: ${oMindMap}`);
     mindMap = oMindMap;
+    if (!mindMap) {
+      maxErrors--;
+      console.warn(`Could not generate valid mind map: generated ${oMindMap}`);
+    }
   }
   if (!mindMap) {
+    console.error("ayooo", mindMap);
     return new Response(
       JSON.stringify({
         error: `Could not generate questions`,

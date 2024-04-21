@@ -6,6 +6,7 @@ import {
   ListOrdered,
   ListTodo,
   FileText,
+  Network,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -75,6 +76,16 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
             <div className="text-center">
               <p className="text-xl font-bold">Flash Cards</p>
               <p className="text-sm">{document._count.Flashcard} available</p>
+            </div>
+          </Link>
+          <Link
+            href={`/d/${params.id}/mindmap`}
+            className="group relative overflow-hidden w-48 h-48 bg-accent text-on-accent border rounded-3xl flex flex-col items-center justify-center"
+          >
+            <Network className="transition duration-700 scale-75 absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 group-hover:scale-100  group-hover:translate-x-1/2  group-hover:translate-y-1/4  h-24 w-24" />
+            <div className="h-24 w-24" />
+            <div className="text-center">
+              <p className="text-xl font-bold">MindMap</p>
             </div>
           </Link>
         </div>
