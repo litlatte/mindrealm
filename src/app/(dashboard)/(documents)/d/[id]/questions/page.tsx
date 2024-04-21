@@ -15,6 +15,15 @@ export default async function DocumentQuestionsPage({
   const questions = await prisma.question.findMany({
     where: {
       documentId: params.id,
+      options: {
+        every: {
+          Answer: {
+            every: {
+              OR: [{ ignored: true }, { correct: false }],
+            },
+          },
+        },
+      },
     },
     include: {
       options: true,
@@ -29,7 +38,7 @@ export default async function DocumentQuestionsPage({
       >
         <ArrowLeft className="w-8 h-8" />
       </Link>
-      <Questions questions={questions} />
+      <Questions documentId={params.id} questions={questions} />
     </div>
   );
 }

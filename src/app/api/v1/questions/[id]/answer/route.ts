@@ -47,6 +47,7 @@ export async function POST(
     data: {
       questionId: questionId,
       optionId: optionId,
+      correct,
     },
   });
 

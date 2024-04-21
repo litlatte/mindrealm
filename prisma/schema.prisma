@@ -22,6 +22,7 @@ model Document {
   fullText   String
   questions  Question[]
   Flashcard  Flashcard[]
+  deleted    Boolean     @default(false)
 }
 
 model Question {
@@ -50,6 +51,8 @@ model Answer {
   optionId   String
   question   Question @relation(fields: [questionId], references: [id])
   option     Option   @relation(fields: [optionId], references: [id])
+  ignored    Boolean  @default(false)
+  correct    Boolean
 }
 
 model Flashcard {
