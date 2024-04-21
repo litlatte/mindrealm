@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 import { animationDelayStyle } from "@/utils/methods";
 import { FileText, Sparkle } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function UploadCard() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setLoading(true);
     const file = e.target.files?.[0];
@@ -37,6 +39,10 @@ export function UploadCard() {
                     pdfText += (item as TextItem).str + " ";
                 });
               }
+              if (pdfText.length > 30000) {
+                toast.error("File is too large");
+                return setLoading(false);
+              }
               console.log("File parsed successfully!");
               return fetch("/api/v1/parse", {
                 method: "POST",
@@ -46,7 +52,7 @@ export function UploadCard() {
                 body: JSON.stringify({ title: fileName, pdfText }),
               })
                 .then((r) => r.json())
-                .then((data) => console.log(data))
+                .then((data) => router.push(`/d/${data.id}`))
                 .catch((e) => {
                   console.error(e);
                   toast.error(

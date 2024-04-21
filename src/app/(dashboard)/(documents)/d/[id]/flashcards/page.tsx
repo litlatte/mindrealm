@@ -1,3 +1,4 @@
+import { FlashCards } from "@/components/flashcards";
 import { FlippableCard } from "@/components/flippablecard";
 import { prisma } from "@/lib/db";
 import { ArrowLeft } from "lucide-react";
@@ -15,6 +16,9 @@ export default async function DocumentFlashCardsPage({
   const flashcards = await prisma.flashcard.findMany({
     where: {
       documentId: params.id,
+      document: {
+        deleted: false,
+      },
     },
   });
   return (
@@ -28,11 +32,7 @@ export default async function DocumentFlashCardsPage({
       </Link>
       {/* <FlashCards questions={questions} /> */}
       <div className="flex justify-center items-center h-screen w-screen">
-        <FlippableCard
-          flashcard={flashcards?.[0]}
-          height={"16rem"}
-          width={"32rem"}
-        />
+        <FlashCards flashcards={flashcards} documentId={params.id} />
       </div>
     </div>
   );

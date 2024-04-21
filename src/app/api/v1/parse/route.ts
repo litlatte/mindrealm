@@ -65,6 +65,15 @@ export async function POST(req: Request) {
     );
   }
 
+  if (pdfText.length > 30000) {
+    return new Response(
+      JSON.stringify({
+        error: "PDF text too long",
+      }),
+      { status: 400 }
+    );
+  }
+
   const title = body.title;
   if (typeof title !== "string" || title.length === 0) {
     return new Response(
@@ -256,7 +265,7 @@ export async function POST(req: Request) {
 
   return new Response(
     JSON.stringify({
-      documentId: document.id,
+      id: document.id,
     }),
     { status: 200 }
   );

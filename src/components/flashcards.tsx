@@ -1,45 +1,35 @@
 "use client";
-import { Option, Question } from "@prisma/client";
+import { Flashcard, Option, Question } from "@prisma/client";
 import { LoaderCircle, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { FlippableCard } from "./flippablecard";
 
-export function Questions({
-  questions: baseQuestions,
+export function FlashCards({
+  flashcards: baseFlashCards,
   documentId,
 }: {
   documentId: string;
-  questions: (Question & {
-    options: Option[];
-  })[];
+  flashcards: Flashcard[];
 }) {
   // shuffledQuestions
-  const questions = useMemo(() => {
-    return baseQuestions
-      .map((question) => {
-        const options = question.options.sort(() => Math.random() - 0.5);
-        return {
-          ...question,
-          options,
-        };
-      })
-      .sort(() => Math.random() - 0.5);
-  }, [baseQuestions]);
+  const flashcards = useMemo(() => {
+    return baseFlashCards.sort(() => Math.random() - 0.5);
+  }, [baseFlashCards]);
 
   const [viewing, setViewing] = useState(0);
 
-  const question = useMemo(() => questions[viewing], [viewing, questions]);
+  const flashcard = useMemo(() => flashcards[viewing], [viewing, flashcards]);
 
-  const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
+  /*
   const handleNext = useCallback(() => {
     if (selected) {
       setLoading(true);
-      fetch(`/api/v1/questions/${question.id}/answer`, {
+      fetch(`/api/v1/questions/${flashcard.id}/answer`, {
         method: "POST",
         body: JSON.stringify({
           optionId: selected,
@@ -69,14 +59,18 @@ export function Questions({
     } else {
       toast.error("Please select an answer");
     }
-  }, [selected, question]);
+  }, [selected, question]);*/
 
   const handleSkip = useCallback(() => {
-    setSelected(null);
+    //setSelected(null);
     setViewing((prev) => prev + 1);
   }, []);
 
   const handleRestart = useCallback(() => {
+    setViewing(0);
+  }, []);
+
+  /*const handleRestart = useCallback(() => {
     fetch(`/api/v1/documents/${documentId}/resetquestions`, {
       method: "POST",
     })
@@ -91,37 +85,21 @@ export function Questions({
         console.error(e);
         toast.error("An error occurred");
       });
-  }, [router]);
+  }, [router]);*/
+
+  const handleNext = useCallback(() => {
+    setViewing((prev) => prev + 1);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 w-screen h-full items-center justify-center">
       <div className="h-fit w-fit">
-        {question !== undefined ? (
+        {flashcard !== undefined ? (
           <>
-            <div
-              key={question.id}
-              className=" bg-white rounded-3xl py-8 px-12 border border-accent-secondary/20 flex flex-col gap-2"
-            >
-              <div className="text-lg font-semibold">{question.title}</div>
-              <div
-                className="flex flex-col gap-2"
-                onChange={(e) => setSelected((e.target as any).value)}
-              >
-                {question.options.map((option) => (
-                  <div key={option.id} className="flex gap-2 items-center">
-                    <input
-                      type="radio"
-                      id={option.id}
-                      name={question.id}
-                      value={option.id}
-                    />
-                    <label className="select-none" htmlFor={option.id}>
-                      {option.text}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <p className="mb-4 text-center text-xl font-bold">
+              Flashcard {viewing + 1} of {flashcards.length}
+            </p>
+            <FlippableCard flashcard={flashcard} />
             <div className="flex justify-end items-center w-full px-4 mt-2 gap-2">
               <button onClick={handleSkip} className="px-3">
                 Skip
@@ -138,13 +116,15 @@ export function Questions({
         ) : (
           <div className="text-2xl font-semibold flex flex-col items-center">
             <p>No more questions</p>
-            <button
-              onClick={handleRestart}
-              className="bg-accent mt-4 hover:opacity-90 group flex items-center justify-center gap-2 text-on-accent px-4 py-2 rounded-xl"
-            >
-              <RefreshCcw className=" transition duration-300 group-hover:rotate-180" />
-              Restart
-            </button>
+            {flashcards.length && (
+              <button
+                onClick={handleRestart}
+                className="bg-accent mt-4 hover:opacity-90 group flex items-center justify-center gap-2 text-on-accent px-4 py-2 rounded-xl"
+              >
+                <RefreshCcw className=" transition duration-300 group-hover:rotate-180" />
+                Restart
+              </button>
+            )}
           </div>
         )}
       </div>

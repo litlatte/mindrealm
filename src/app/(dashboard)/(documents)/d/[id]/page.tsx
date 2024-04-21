@@ -10,6 +10,8 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { DeleteDocumentButton } from "@/components/deletedocument";
+import { PRETTY_EXPERIENCES } from "@/utils/constants";
 
 export type DocumentPageProps = {
   params: {
@@ -21,9 +23,11 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
   const document = await prisma.document.findFirst({
     where: {
       id: params.id,
+      deleted: false,
     },
     select: {
       title: true,
+      experience: true,
       _count: {
         select: {
           questions: true,
@@ -44,7 +48,8 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
       >
         <ArrowLeft className="w-8 h-8" />
       </Link>
-      <div className="bg-white flex gap-4 flex-col items-center rounded-3xl border border-black/10 px-6 py-8 w-[30rem] min-h-72">
+      <div className="relative bg-white flex gap-4 flex-col items-center rounded-3xl border border-black/10 px-6 py-8 w-[30rem] min-h-72">
+        <DeleteDocumentButton id={params.id} />
         <div className="flex gap-1 select-none items-center justify-center text-lg font-semibold text-center px-3 py-1 bg-accent-secondary/10 rounded-lg">
           <FileText className="h-5 w-5" />
           {document.title}
@@ -72,6 +77,14 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
               <p className="text-sm">{document._count.Flashcard} available</p>
             </div>
           </Link>
+        </div>
+        <div>
+          This document was detected to be for{" "}
+          {
+            PRETTY_EXPERIENCES[
+              document.experience as keyof typeof PRETTY_EXPERIENCES
+            ]
+          }
         </div>
       </div>
     </div>

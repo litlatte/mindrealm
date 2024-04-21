@@ -15,6 +15,9 @@ export default async function DocumentQuestionsPage({
   const questions = await prisma.question.findMany({
     where: {
       documentId: params.id,
+      document: {
+        deleted: false,
+      },
       options: {
         every: {
           Answer: {

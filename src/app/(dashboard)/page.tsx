@@ -50,7 +50,11 @@ export function DocumentCard({ document, index }: DocumentCardProps) {
 }
 
 export default async function Home() {
-  const documents = await prisma.document.findMany();
+  const documents = await prisma.document.findMany({
+    where: {
+      deleted: false,
+    },
+  });
 
   return (
     <div className="relative h-screen overrflow-hidden px-24 py-8 ">
