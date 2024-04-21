@@ -19,7 +19,6 @@ type DocumentPageProps = {
     id: string;
   };
 };
-
 export default async function DocumentPage({ params }: DocumentPageProps) {
   const document = await prisma.document.findFirst({
     where: {

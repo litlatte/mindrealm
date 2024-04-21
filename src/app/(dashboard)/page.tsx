@@ -23,6 +23,7 @@ type DocumentCardProps = {
   document: Document;
   index: number;
 };
+export const dynamic = "force-dynamic";
 
 function DocumentCard({ document, index }: DocumentCardProps) {
   return (
