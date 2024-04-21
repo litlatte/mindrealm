@@ -52,7 +52,10 @@ export function UploadCard() {
                 body: JSON.stringify({ title: fileName, pdfText }),
               })
                 .then((r) => r.json())
-                .then((data) => router.push(`/d/${data.id}`))
+                .then((data) => {
+                  router.refresh();
+                  router.push(`/d/${data.id}`);
+                })
                 .catch((e) => {
                   console.error(e);
                   toast.error(
@@ -129,7 +132,7 @@ export function UploadCard() {
             />
             <p className="text-xl mt-6">Choose File</p>
             <div className="text-sm opacity-80">
-              Upload a PDF with 2 pages or less
+              Upload a PDF (max 30,000 characters)
             </div>
           </>
         )}

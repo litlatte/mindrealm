@@ -100,9 +100,12 @@ export function Questions({
           <>
             <div
               key={question.id}
-              className=" bg-white rounded-3xl py-8 px-12 border border-accent-secondary/20 flex flex-col gap-2"
+              className=" bg-white relative rounded-3xl py-8 px-12 border border-accent-secondary/20 flex flex-col gap-2"
             >
               <div className="text-lg font-semibold">{question.title}</div>
+              <div className="bg-accent-secondary/20 w-fit rounded-lg p-2">
+                Difficulty: {question.difficulty}
+              </div>
               <div
                 className="flex flex-col gap-2"
                 onChange={(e) => setSelected((e.target as any).value)}

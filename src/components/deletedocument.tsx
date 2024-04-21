@@ -15,6 +15,7 @@ export function DeleteDocumentButton({ id }: DeleteDocumentProps) {
       method: "DELETE",
     })
       .then(() => {
+        router.refresh();
         router.push("/");
       })
       .catch((e) => {
