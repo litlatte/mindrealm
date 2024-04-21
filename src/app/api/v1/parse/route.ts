@@ -7,9 +7,10 @@ import {
   EXPERIENCES,
   Experience,
   LLMQuestion,
+  LLMFlashCard,
 } from "@/utils/constants";
 import { prisma } from "@/lib/db";
-import { Option, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -136,6 +137,41 @@ export async function POST(req: Request) {
     );
   }
   console.log(`Experience: ${experience}`);
+  let flashCards: LLMFlashCard[] | undefined = undefined;
+  while (maxErrors > 0 && !flashCards) {
+    let oFlashCards =
+      (await generateOpenAIResponse(
+        openai,
+        prompts.flashCards(experience as Experience),
+        pdfText
+      )) || undefined;
+    console.log(`Flash Cards: ${oFlashCards}`);
+    try {
+      flashCards = JSON.parse(
+        oFlashCards?.replaceAll("```json", "")?.replaceAll("```", "") || ""
+      );
+      flashCards = ((flashCards as any)?.flashCards ||
+        (flashCards as any).flashcards ||
+        flashCards) as LLMFlashCard[];
+    } catch (e) {
+      console.error(`Invalid JSON response: `, e);
+    }
+    if (!flashCards) {
+      maxErrors--;
+      console.warn(
+        `Could not generate valid questions: generated ${oFlashCards}`
+      );
+    }
+  }
+  if (!flashCards) {
+    return new Response(
+      JSON.stringify({
+        error: `Could not generate questions`,
+      }),
+      { status: 500 }
+    );
+  }
+
   let questions: LLMQuestion[] | undefined = undefined;
   while (maxErrors > 0 && !questions) {
     let oQuestions =
@@ -144,9 +180,11 @@ export async function POST(req: Request) {
         prompts.questions(experience as Experience),
         pdfText
       )) || undefined;
-    console.log(`Questions: ${oQuestions}`);
+    console.log(`Flash Cards: ${oQuestions}`);
     try {
-      questions = JSON.parse(oQuestions || "");
+      questions = JSON.parse(
+        oQuestions?.replaceAll("```json", "")?.replaceAll("```", "") || ""
+      );
       questions = ((questions as any)?.questions || questions) as LLMQuestion[];
     } catch (e) {
       console.error(`Invalid JSON response: `, e);
@@ -175,30 +213,46 @@ export async function POST(req: Request) {
     },
   });
 
-  const promises: Promise<Prisma.BatchPayload>[] = [];
-  for (const question of questions) {
-    promises.push(
-      new Promise(async (resolve, reject) => {
-        const q = await prisma.question.create({
-          data: {
-            documentId: document.id,
-            title: question.question,
-          },
-        });
-        prisma.option
-          .createMany({
-            data: question.options.map((option, index) => ({
-              questionId: q.id,
-              text: option.text,
-              correct: index == question.right_answer,
-            })),
-          })
-          .then(resolve)
-          .catch(reject);
-      })
-    );
+  // const promises: Promise<Prisma.BatchPayload>[] = [];
+  // for (const question of questions) {
+  //   promises.push(
+  //     new Promise(async (resolve, reject) => {
+  //       const q = await prisma.question.create({
+  //         data: {
+  //           documentId: document.id,
+  //           title: question.question,
+  //           difficulty: question.difficulty,
+  //         },
+  //       });
+  //       prisma.option
+  //         .createMany({
+  //           data: question.options.map((option, index) => ({
+  //             questionId: q.id,
+  //             text: option.text,
+  //             correct: index == question.right_answer,
+  //           })),
+  //         })
+  //         .then(resolve)
+  //         .catch(reject);
+  //     })
+  //   );
+  // }
+  // await Promise.all(promises);
+
+  let flashCardsArr = flashCards;
+
+  if (!Array.isArray(flashCardsArr)) {
+    flashCardsArr = Object.values(flashCardsArr);
   }
-  await Promise.all(promises);
+
+  await prisma.flashcard.createMany({
+    data: flashCardsArr.map((flashCard) => ({
+      documentId: document.id,
+      question: flashCard.question,
+      answer: flashCard.answer,
+      difficulty: flashCard.difficulty,
+    })),
+  });
 
   return new Response(
     JSON.stringify({

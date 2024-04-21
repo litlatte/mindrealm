@@ -11,82 +11,20 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { animationDelayStyle } from "../../utils/methods";
+import { Document } from "@prisma/client";
+import { prisma } from "@/lib/db";
 
 export type DocumentSection = {
   title: string;
   summary: string;
 };
 
-export type DocumentInfo = {
-  title: string;
-  description: string;
-  date: Date;
-  sections: DocumentSection[];
-};
-
-const DEFAULT_DOCUMENTS: DocumentInfo[] = [
-  {
-    title: "Mathematics Basics",
-    description: "This is a document",
-    date: new Date(),
-    sections: [
-      {
-        title: "Section 1",
-        summary: "This is a section",
-      },
-    ],
-  },
-  {
-    title: "History of the World",
-    description: "This is another document",
-    date: new Date(),
-    sections: [
-      {
-        title: "Section 1",
-        summary: "This is a section",
-      },
-      {
-        title: "Section 2",
-        summary: "This is another section",
-      },
-    ],
-  },
-  {
-    title: "History of the Roman Empire",
-    description: "This is a third document",
-    date: new Date(),
-    sections: [
-      {
-        title: "Section 1",
-        summary: "This is a section",
-      },
-      {
-        title: "Section 2",
-        summary: "This is another section",
-      },
-      {
-        title: "Section 3",
-        summary: "This is a third section",
-      },
-    ],
-  },
-];
-
-function randomDocument() {
-  return DEFAULT_DOCUMENTS[
-    Math.floor(Math.random() * DEFAULT_DOCUMENTS.length)
-  ];
-}
-
 export type DocumentCardProps = {
-  document?: DocumentInfo;
+  document: Document;
   index: number;
 };
 
-export function DocumentCard({
-  document = randomDocument(),
-  index,
-}: DocumentCardProps) {
+export function DocumentCard({ document, index }: DocumentCardProps) {
   return (
     <div className="relative bg-white p-6 rounded-3xl h-52 w-80 flex flex-col justify-between border border-black/10 overflow-hidden">
       <div className="text-2xl font-semibold">{document.title}</div>
@@ -99,22 +37,27 @@ export function DocumentCard({
           size={120}
         />
         <div />
-        <button className="text-xl group font-semibold border text-on-accent border-accent-secondary/50 flex items-center gap-1 transition duration-300 bg-accent hover:opacity-80 px-4 py-2 rounded-xl">
+        <Link
+          href={`/d/${document.id}`}
+          className="text-xl group font-semibold border text-on-accent border-accent-secondary/50 flex items-center gap-1 transition duration-300 bg-accent hover:opacity-80 px-4 py-2 rounded-xl"
+        >
           <div className=" pointer-events-none">Go</div>
           <ArrowRight className=" group-hover:scale-125 group-hover:translate-x-1  transition-transform duration-300" />
-        </button>
+        </Link>
       </div>
     </div>
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const documents = await prisma.document.findMany();
+
   return (
     <div className="relative h-screen overrflow-hidden px-24 py-8 ">
       <div>
         <div className="flex  flex-wrap gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <DocumentCard index={i} key={i} />
+          {documents.map((document, i) => (
+            <DocumentCard document={document} index={i} key={document.id} />
           ))}
           <Link
             href="/upload"

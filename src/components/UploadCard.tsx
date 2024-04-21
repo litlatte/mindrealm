@@ -88,18 +88,18 @@ export function UploadCard() {
         {loading ? (
           <>
             <div className="relative w-48 h-32 shrink-0">
-              <Sparkle className="animate-star stroke-accent absolute h-16 w-16 top-2 left-6" />
+              <Sparkle className="animate-star opacity-0 stroke-accent absolute h-16 w-16 top-2 left-6" />
               <Sparkle
                 style={{
                   ...animationDelayStyle(0.15),
                 }}
-                className="animate-star stroke-accent absolute h-12 w-12 bottom-0 left-8"
+                className="animate-star opacity-0 stroke-accent absolute h-12 w-12 bottom-0 left-8"
               />
               <Sparkle
                 style={{
                   ...animationDelayStyle(0.3),
                 }}
-                className="animate-star stroke-accent absolute h-32 w-32 right-2 top-1/2 -translate-y-1/2"
+                className="animate-star opacity-0 stroke-accent absolute h-32 w-32 right-2 top-1/2 -translate-y-1/2"
               />
             </div>
             <p className="mt-10 font-bold text-lg">Generating...</p>

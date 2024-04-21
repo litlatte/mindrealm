@@ -9,6 +9,7 @@ export default function UploadPage() {
       <Link
         href="/"
         className="p-4 bg-white absolute left-12 top-12 rounded-full border border-black/10 w-fit h-fit"
+        aria-label="Go back to home page"
       >
         <ArrowLeft className="w-8 h-8" />
       </Link>

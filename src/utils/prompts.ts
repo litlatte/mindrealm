@@ -22,8 +22,26 @@ const FLASH_CARD_SYSTEM_PROMPT = (experience: Experience) =>
   "Act: " +
   "Present only one meticulously crafted correct answer." +
   "Observation:" +
-  "The response must be in JSON format" +
-  `Difficulty level to respect: ${PRETTY_EXPERIENCES[experience]}`;
+  "The response must be in JSON format of an array of at least 10 elements containing a question an answer and the difficulty of the question where  the difficulty is a number calculated based on how much different information you need to answer the question" +
+  `Difficulty level to respect: ${PRETTY_EXPERIENCES[experience]}`
+  "The TypeScript type to follow is:\n" +
+  "type FlashCard = {\n" +
+  "  question: string;\n" +
+  "  answer: string;\n" +
+  "  difficulty: number; /* number that goes 1 to 10, the difficulty is calculated based on how much different information you need to answer the question */\n" +
+  "};" +
+  "Follwing typescript type generate a JSON looking like this:\n" +
+  `[{
+    "question": "What is the capital of France?",
+    "answer": "Paris",
+    "difficulty": 1
+  },
+  {
+    "question": "What is the capital of Italy?",
+    "answer": "Rome",
+    "difficulty": 2
+  }]
+  \nThe response must consist of multiple elements ( at least 10 flash cards ) fromatted in JSON and must be a valid JSON array only of 10 elements`;
 
 const EXPERIENCE_EVAULATION_SYSTEM_PROMPT =
   "Thought: We're developing a web app to support users in their studies. You must act as a very good study tutor. We want a user experience that's tailored to the user's level of education. The text data that you are going to read is extracted from a PDF document (notes, documentation, paper, and much more) that the user wants to learn very well. " +
@@ -45,8 +63,7 @@ const QUESTIONS_SYSTEM_PROMPT = (experience: Experience) =>
   "  difficulty: number; /* number that goes 1 to 10, the difficulty is calculated based on how much different information you need to answer the question */ */\n" +
   "};" +
   "Follwing typescript type generate a JSON looking like this:\n" +
-  `{
-  "questions": [
+  `[
     {
       "question": "What is the capital of France?",
       "options": [
@@ -56,7 +73,7 @@ const QUESTIONS_SYSTEM_PROMPT = (experience: Experience) =>
         { "text": "Dublin" }
       ],
       "right_answer": 2,
-      "level": "elementary_school"
+      "difficulty": 1
     },
     {
       "question": "What is the capital of Italy?",
@@ -67,10 +84,9 @@ const QUESTIONS_SYSTEM_PROMPT = (experience: Experience) =>
         { "text": "Rome" }
       ],
       "right_answer": 3,
-      "level": "elementary_school"
+      "difficulty": 2
     }
-  ]
-}`;
+  ]\n\nThe response must consist of multiple elements fromatted in JSON and must be a valid JSON array only`;
 
 export const prompts = {
   flashCards: FLASH_CARD_SYSTEM_PROMPT,

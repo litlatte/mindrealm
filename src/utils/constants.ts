@@ -22,5 +22,11 @@ export type LLMQuestion = {
     text: string;
   }[];
   right_answer: number;
-  level: Experience;
+  difficulty: number;
+};
+
+export type LLMFlashCard = {
+  question: string;
+  answer: string;
+  difficulty: number;
 };

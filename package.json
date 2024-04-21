@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "dotenv -e .env.local -- npx prisma db push"
+    "db:push": "dotenv -e .env.local -- npx prisma db push",
+    "db:seed": "dotenv -e .env.local -- npx prisma db seed",
+    "db:studio": "dotenv -e .env.local -- npx prisma studio",
+    "db:reset": "dotenv -e .env.local -- npx prisma migrate reset --force"
   },
   "dependencies": {
     "@prisma/client": "^5.12.1",
@@ -15,6 +18,8 @@
     "ai": "^3.0.24",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dotenv-cli": "^7.4.1",
+    "framer-motion": "^11.1.7",
     "lucide-react": "^0.372.0",
     "next": "14.2.2",
     "next-themes": "^0.3.0",
@@ -22,7 +27,6 @@
     "pdfjs-dist": "^4.1.392",
     "react": "^18",
     "react-dom": "^18",
-    "dotenv-cli": "^7.4.1",
     "react-pdftotext": "^1.2.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",

@@ -15,12 +15,13 @@ datasource db {
 }
 
 model Document {
-  id         String     @id @default(cuid())
+  id         String      @id @default(cuid())
   title      String
-  createdAt  DateTime   @default(now())
+  createdAt  DateTime    @default(now())
   experience String
   fullText   String
   questions  Question[]
+  Flashcard  Flashcard[]
 }
 
 model Question {
@@ -28,8 +29,9 @@ model Question {
   title      String
   createdAt  DateTime @default(now())
   documentId String
+  difficulty Int
   document   Document @relation(fields: [documentId], references: [id])
-  answers    Option[]
+  options    Option[]
   Answer     Answer[]
 }
 
@@ -48,4 +50,14 @@ model Answer {
   optionId   String
   question   Question @relation(fields: [questionId], references: [id])
   option     Option   @relation(fields: [optionId], references: [id])
+}
+
+model Flashcard {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  question   String
+  answer     String
+  difficulty Int
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
 }
