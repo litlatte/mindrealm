@@ -13,6 +13,7 @@ export function UploadCard() {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setLoading(true);
     const file = e.target.files?.[0];
+    const fileName = file?.name || "Generic File";
     if (!file) {
       return setLoading(false);
     }
@@ -42,7 +43,7 @@ export function UploadCard() {
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ pdfText }),
+                body: JSON.stringify({ title: fileName, pdfText }),
               })
                 .then((r) => r.json())
                 .then((data) => console.log(data))
